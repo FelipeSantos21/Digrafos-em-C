@@ -6,6 +6,7 @@
     -removeAresta (Ponteiro para o digrafo, vertice 1, vertice 2): Remove a aresta entre o vertice 1 e 2.
     -mostraArestas (Ponteiro para o digrafo): Lista as arestas.
 */
+
 #include <stdio.h>
 #include <malloc.h>
 
@@ -19,12 +20,13 @@ typedef struct _aresta {
 
 void criaAresta (aresta* pointDigrafo, int vertice1, int vertice2, int peso) {
     
-    aresta novaAresta = (aresta) malloc(syzeof(struct _aresta));
+    aresta aux1, aux2;
+    aux1 = aux2 = pointDigrafo[vertice1];
+    
+    aresta novaAresta = (aresta) malloc(sizeof(struct _aresta));
     novaAresta->vertice = vertice2;
     novaAresta->peso = peso;
     novaAresta->prox = NULL;
-
-    aresta aux1 = aux2 = pointDigrafo[vertice1];
 
     if (pointDigrafo[vertice1] == NULL){		//Insercao na lista partindo de v1 vazia
 		pointDigrafo[vertice1] = novaAresta;
@@ -69,7 +71,8 @@ void criaAresta (aresta* pointDigrafo, int vertice1, int vertice2, int peso) {
 
 void removeAresta (aresta* pointDigrafo, int vertice1, int vertice2) {
     
-    aresta aux1 = aux2 = pointDigrafo[vertice1];
+	aresta aux1, aux2;
+    aux1 = aux2 = pointDigrafo[vertice1];
 	
 	if (pointDigrafo[vertice1] == NULL){
 		system("cls");
@@ -101,32 +104,29 @@ void removeAresta (aresta* pointDigrafo, int vertice1, int vertice2) {
 
 void mostraArestas (aresta* pointDigrafo) {
     int i;
-    bool printou = false;
     aresta aux;
 
     system("cls");
 
     for(i = 0; i<maxVertices; i++){
         if(pointDigrafo[i] != NULL){
-            printou = true;
             printf("Aresta de [%d] para [%d] (peso %d)",i ,pointDigrafo[i]->vertice, pointDigrafo[i]->peso);
-            aux = pointDigrafo->prox;
+            aux = pointDigrafo[i]->prox;
             while(aux != NULL){
                 printf(", [%d] (peso %d)", aux->vertice, aux->peso);
                 aux = aux->prox;
             }
             printf("\n");
         }
-    
-    if(!printou) printf("Não há nenhuma aresta definida.\n");
-    else printf("\n");
+    	else printf("\n");
+	}
 }
 
 void printMenu(){
 	printf("Escolha uma das opcoes:\n    1 - Criar aresta\n    2 - Remover aresta\n    3 - Mostrar arestas existentes\n    4 - Sair\n");
 }
 
-int main () {
+int main(int argc, const char * argv[]) {
     int i, opcao, v1, v2, p;
     aresta *pointDigrafo[maxVertices];
 
@@ -135,14 +135,18 @@ int main () {
     }
 
     do{
-        PrintMenu();
+        printMenu();
         scanf("%d", &opcao);
         switch(opcao){
             case 1:
                 printf("Digite o primeiro vertice da aresta: ");
                 scanf("%d", &v1);
-                printf("Digite o segundo vertice da aresta: ");
-                scanf("%d", &v2);
+				printf("Digite o segundo vertice da aresta: ");
+				scanf("%d", &v2);
+				while(v1==v2){
+					printf("O segundo vertice nao pode ser o mesmo que o primeiro, digite outro valor: ");
+					scanf("%d", &v2);
+				}
                 printf("Digite o peso da aresta: ");
                 scanf("%d", &p);
                 criaAresta(&pointDigrafo, v1, v2, p);
@@ -152,6 +156,10 @@ int main () {
                 scanf("%d", &v1);
                 printf("Digite o segundo vertice da aresta: ");
                 scanf("%d", &v2);
+				while(v1==v2){
+					printf("O segundo vertice nao pode ser o mesmo que o primeiro, digite outro valor: ");
+					scanf("%d", &v2);
+				}
                 removeAresta(&pointDigrafo, v1, v2);
                 break;
             case 3:
@@ -159,6 +167,4 @@ int main () {
                 break;
         }
 	}while(opcao != 4);
-
-    return 0;
 }
